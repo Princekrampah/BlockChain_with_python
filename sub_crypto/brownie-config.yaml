@@ -1,0 +1,10 @@
+dotenv: .env
+wallets:
+  from_key: ${PRIVATE_KEY}
+networks:
+  rinkeby:
+    verify: True
+  development:
+    verify: False
+  ganach-local:
+    verify: False
