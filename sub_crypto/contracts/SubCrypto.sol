@@ -1,52 +1,39 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.0;
 
-contract SubCrypto{
+contract Coin{
 
     address public minter;
     mapping(address => uint256) public balances;
 
-    // at point of creating a contract, its own by the creator
-    constructor() {
+    constructor(){
         minter = msg.sender;
     }
 
-    event minted(address from, uint amount);
+    event minted(address from, uint256 amount);
 
-
-    // send amount to a given account, can only be called by
-    // the creator of the contract
-    function mint(address receiver, uint256 amount) public{
-        // make sure the owner is the one making the transaction
-        require(msg.sender == minter, "You are not the owner of this account");
-        balances[receiver] += amount;
-        emit minted(msg.sender, amount);
+    // Can only be called by creater of the contract
+    function mint(address _receiver, uint256 _amount) public{
+        require(msg.sender == minter, "You are not the owner of this contract");
+        balances[_receiver] += _amount;
+        emit minted(msg.sender, _amount);
     }
 
-    // error
-    error InsufficientBalance(uint requested, uint available);
+    error InsufficientBalance(uint256 requested, uint256 available);
 
-    // event
-    event Sent(address from, address to, uint amount);
+    event Sent(address from, address to, uint256 amount);
 
-    function send(address receiver, uint256 amount) public{
-
-        // check the owner state
-        require(msg.sender == minter, "You are not the owner of this account");
-
-        // check it you have sufficient balance
-        if(amount > balances[msg.sender]){
+    function sender(address _receiver, uint256 _amount) public{
+        if(_amount > balances[msg.sender]){
             revert InsufficientBalance({
-                requested: amount,
-                available: balances[minter]
+                requested: _amount,
+                available: balances[msg.sender]
             });
         }
 
-        // perform the transaction
-        balances[minter] -= amount;
-        balances[receiver] += amount;
+        balances[msg.sender] -= _amount;
+        balances[_receiver] += _amount;
 
-        // emit a success message
-        emit Sent(msg.sender, receiver, amount);
+        emit Sent(msg.sender, _receiver, _amount);
     }
 }
